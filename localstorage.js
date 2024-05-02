@@ -44,7 +44,7 @@ let presioInput = d.querySelector(".presio");
 let imagenInput = d.querySelector(".imagen");
 let descripcionInput = d.querySelector(".descripcion");
 let btnGuardarInput = d.querySelector(".btn-guardar");
-
+let buscadorInput = d.querySelector(".buscador")
 // agregar evento click al boton del formulario 
 // el addEventListener es un escuchador de eventos 
 // el cual permite hacer la escucha sin modificar el HTML
@@ -118,6 +118,7 @@ function mostrarDatos() {
 
     //console.log(pedidos);
     // mostrae los datos en la tabal 
+    tabla.innerHTML= "";
     pedidos.forEach((p,i) => {
       let fila = d.createElement("tr")
       fila.innerHTML = `
@@ -125,7 +126,7 @@ function mostrarDatos() {
       <td class="lista list-group-item"> ${p.cliente} </td>
       <td> ${p.producto} </td>
       <td> ${p.presio} </td>
-      <td> ${p.imagen} </td>
+      <td> <img src="${p.imagen}" width="50%"> </td>
       <td> ${p.descripcion} </td>
       <td> 
         <span onclick="editarPedido(${i})" class= "btn-editar btn btn-warning">📑 </span>
@@ -207,23 +208,34 @@ function buscador() {
   let pedidosPrebios = JSON.parse(localStorage.getItem(listadoPedidos));
   if (pedidosPrebios !== null) {
     pedidos = pedidosPrebios;
+  
+  buscadorInput.addEventListener("keyup", ()=> {
+    const textoBusqueda = buscadorInput.value.toLowerCase();
+    const resultado =d.querySelector(".table")
+    let fila = d.createElement("tr")
+    resultado.innerHTML = ""; 
+    for (let AuxBuscador of pedidos ) { 
+      let busqueda = AuxBuscador.cliente.toLowerCase();
+      if (busqueda.indexOf(textoBusqueda) !== -1) { 
+        resultado.innerHTML +=
+        `<td> ${AuxBuscador.cliente} </td>
+        <td> ${AuxBuscador.producto} </td>
+        <td> ${AuxBuscador.presio} </td>
+        <td> <img src="${AuxBuscador.imagen}" width="50%"></td>
+        <td> ${AuxBuscador.descripcion} </td>`
+        
+      }
+      
+    } 
+    resultado.appendChild(fila)
+    });
   }
-
-  d.addEventListener("keyup", (e) => {
-    if (e.target.matches(".buscador")) {
-      d.querySelectorAll(".lista").forEach((pedido) => {
-        if (pedido.textContent.toLowerCase().includes(e.target.value.toLowerCase())) {
-          pedido.classList.remove("pedidos");
-        } else {
-          pedido.classList.add("pedidos");
-        }
-      });
-    }
-  });
+  
 }
 
 // Llama a la función buscador para activar el filtro de búsqueda
-buscador();
+
+
 
 
 
@@ -232,5 +244,7 @@ buscador();
 d.addEventListener("DOMContentLoaded", ()=>{
   borrarTabla();
   mostrarDatos();
+  buscador();
 })
+
 
